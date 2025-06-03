@@ -11,8 +11,7 @@ export default function AllTimeTrendingPerson() {
     async function getAllTrendPerson() {
       try {
         const allTrendingPerson = await getAllTrendingPerson();
-        console.log(allTrendingPerson);
-        setAllTrendPersonApiResponse(allTrendingPerson.results || []);
+         setAllTrendPersonApiResponse(allTrendingPerson.results || []);
       } catch (error) {
         console.error("Error fetching trending data:", error);
       }

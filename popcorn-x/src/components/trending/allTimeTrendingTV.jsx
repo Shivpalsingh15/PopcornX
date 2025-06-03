@@ -9,8 +9,7 @@ export default function AllTimeTrendingTV() {
     async function getAllTrendTV() {
       try {
         const allTrendingTV = await getAllTrendingTV();
-        console.log(allTrendingTV);
-        setAllTrendTVApiResponse(allTrendingTV.results || []);
+         setAllTrendTVApiResponse(allTrendingTV.results || []);
       } catch (error) {
         console.error("Error fetching trending data:", error);
       }

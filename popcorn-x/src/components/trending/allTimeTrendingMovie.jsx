@@ -9,8 +9,7 @@ export default function AllTimeTrendingMovie() {
     async function getAllTrendMovie() {
       try {
         const allTrendingMovie = await getAllTrendingMovie();
-        console.log(allTrendingMovie);
-        setAllTrendMovieApiResponse(allTrendingMovie.results || []);
+         setAllTrendMovieApiResponse(allTrendingMovie.results || []);
       } catch (error) {
         console.error("Error fetching trending data:", error);
       }

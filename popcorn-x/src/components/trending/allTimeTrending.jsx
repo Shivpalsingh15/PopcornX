@@ -1,16 +1,21 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import getAllTrending from "src/apis/trending/getAllTrending";
+import { LuArrowRight } from "react-icons/lu";
+import { LuArrowLeft } from "react-icons/lu";
+
+
 
 export default function AllTimeTrending() {
   const [allTrendApiResponse, setAllTrendApiResponse] = useState([]);
   const [currentTimeWindow, setCurrentTimeWindow] = useState("day");
+  const [starting, setstarting] = useState(0);
+  const [ending, setending] = useState(5);
 
   useEffect(() => {
     async function getAllTrendingData(currentTimeWindow) {
       try {
         const allTrending = await getAllTrending(currentTimeWindow);
-        console.log(allTrending.results.length);
         setAllTrendApiResponse(allTrending.results || []);
       } catch (error) {
         console.error("Error fetching trending data:", error);
@@ -18,56 +23,82 @@ export default function AllTimeTrending() {
     }
     getAllTrendingData(currentTimeWindow);
   }, [currentTimeWindow]);
+
+  console.log(starting);
+  console.log(ending);
+
+  const handlePrevFive = () => {
+    setstarting((prev) => Math.max(prev - 5, 0));
+    setending((prev) => Math.max(prev - 5, 5));
+  };
+  
+  const handleNextFive = () => {
+    if (ending < allTrendApiResponse.length) {
+      setstarting((prev) => prev + 5);
+      setending((prev) => Math.min(prev + 5, allTrendApiResponse.length));
+    }
+  };
+  
+ 
   return (
     <div className="p-4 text-gray-200">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center text-xs">
         <h1 className=" font-bold   ">All Time 10 Trending</h1>
-        <select onChange={(e)=>setCurrentTimeWindow(e.target.value)} name="" id="">
+        <select
+          onChange={(e) => setCurrentTimeWindow(e.target.value)}
+          name=""
+          id=""
+        >
           <option value="day">Day</option>
           <option value="week">Week</option>
         </select>
         <span>View more</span>
       </div>
-      <div className="flex overflow-x-scroll w-full gap-1">
-        {allTrendApiResponse.slice(0,10).map((movie, index) => (
+      <div className="flex  overflow-hidden w-full gap-1 relative ">
+        {
+          starting > 0 && 
+        
+        <button
+        disabled={starting == 0}
+        onClick={handlePrevFive}
+        className="absolute  top-[50%] bg-gradient-to-l from-black via-blue-950 to-transparent p-1 rounded-full -left-1 z-50 "
+        >
+                    <LuArrowLeft/>
+
+        </button>
+
+        }
+        {allTrendApiResponse.slice(starting, ending).map((movie, index) => (
           <div
             key={movie.id}
-            className="  min-w-[15vw] text-gray-500 font-bold cursor-pointer ml-10"
+            className="min-w-[15vw]  md:min-w-[13vw] text-gray-500 font-bold cursor-pointer ml-2 md:ml-8 "
           >
-            <div className="relative">
+            <div className="relative ">
               <img
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 alt={movie.title}
-                className="object-cover rounded mx-auto h-[40vh]"
+                className="object-cover rounded mx-auto md:h-[20vh]"
               />
-              <div className="absolute -bottom-5 text-9xl text-gray-300 -left-12">
-                {index + 1}
+              <div className="absolute -bottom-2 -left-2 text-3xl md:-bottom-5 md:text-6xl text-gray-300 md:-left-8">
+              {starting + index + 1}
               </div>
             </div>
-            <div className="">
-              {/* <h2 className="text-lg font-semibold mt-2 ">
-                {movie.title || "Title is Missing."}
-              </h2>
-              <p className="text-sm ">{movie.overview.slice(0, 60)}...</p> */}
+            {/* <div className="">
               <p>Media: {movie.media_type.toUpperCase()}</p>
-
-              {/* <p>{movie.original_language}</p> */}
-            </div>
+              </div> */}
           </div>
         ))}
+        {
+          ending < allTrendApiResponse.length && 
+        <button
+        disabled={ending == allTrendApiResponse.length}
+        onClick={handleNextFive}
+        className="absolute top-[50%] bg-gradient-to-l from-black via-blue-950 to-transparent p-1  -right-1 rounded-full  z-50"
+        >
+          <LuArrowRight/>
+        </button>
+        }
       </div>
-
-      {/* <ReactPaginate
-        previousLabel={"← Previous"}
-        nextLabel={"Next →"}
-        breakLabel={"..."}
-        pageCount={pageCount}
-        onPageChange={handlePageClick}
-        containerClassName={"flex justify-center mt-6 gap-2"}
-        pageClassName={"px-3 py-1 border rounded"}
-        activeClassName={"bg-blue-500 text-white"}
-        disabledClassName={"opacity-50 cursor-not-allowed"}
-      /> */}
     </div>
   );
 }
