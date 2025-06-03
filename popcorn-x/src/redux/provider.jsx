@@ -10,7 +10,7 @@ export default function ReduxProvider({ children }) {
       <Provider store={store}>
  
         {children}
-        </Provider>,
+        </Provider>
     </div>
   );
 }
